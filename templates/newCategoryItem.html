@@ -1,0 +1,36 @@
+<html>
+
+<head>
+
+</head>
+
+
+<body>
+    <div>
+        <h1>New Category Item</h1>
+
+        <form action="{{ url_for('newCategoryItem', catalog_id=catalog_id )}}" method='post'>
+
+            <label for="name">Name:</label>
+            <div><textarea type="text" maxlength="100" rows="1" name='name' required></textarea></div>
+
+            <label for="price">Price:</label>
+            <div>$ <textarea maxlength="100" rows="1" name='price' required></textarea></div>
+
+            <label for="size">Size:</label>
+            <div><textarea name='size' maxlength="250" rows="3" required></textarea></div>
+
+            <label for="color">Color:</label>
+            <div><textarea name='color' maxlength="250" rows="3" required></textarea></div>
+
+            <label for="description">Description:</label>
+            <div><textarea name='description' maxlength="250" rows="3" required></textarea></div>
+            </br>
+            <input type='submit' value='Create'>
+
+        </form>
+    </div>
+</body>
+
+
+</html>

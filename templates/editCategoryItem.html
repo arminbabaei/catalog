@@ -1,0 +1,37 @@
+<html>
+
+<head>
+
+</head>
+
+
+<body>
+    <div>
+        <h1>Edit Category Item</h1>
+        <form action="#" method="post">
+            <div>
+                <label for="name">Name:</label>
+                <div><textarea maxlength="100" rows="1" name="name">{{item.name }}</textarea></div>
+
+                <label for="price">Price:</label>
+                <div>$ <textarea maxlength="100" rows="1" name="price">{{item.price}}</textarea></div>
+
+                <label for="size">Size:</label>
+                <div><textarea maxlength="250" rows="3" name="size">{{item.size}}</textarea></div>
+
+                <label for="color">Color:</label>
+                <div><textarea maxlength="250" rows="3" name="color">{{item.color}}</textarea></div>
+
+                <label for="description">Description:</label>
+                <div><textarea maxlength="250" rows="3" name="description">{{item.description}}</textarea></div>
+                </br>
+                <div><button type="submit">Save</button>
+                    <a
+                        href="{{url_for('showCategoryItems', catalog_id = catalog_id, item_id = item_id)}}"><button>Cancel</button></a>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
