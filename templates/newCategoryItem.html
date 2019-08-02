@@ -9,7 +9,7 @@
     <div>
         <h1>New Category Item</h1>
 
-        <form action="{{ url_for('newCategoryItem', catalog_id=catalog_id )}}" method='post'>
+        <form action="{{ url_for('newCategoryItem', category_id=category_id )}}" method='post'>
 
             <label for="name">Name:</label>
             <div><textarea type="text" maxlength="100" rows="1" name='name' required></textarea></div>

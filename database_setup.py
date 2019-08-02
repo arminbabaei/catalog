@@ -1,5 +1,4 @@
 import sys
-
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -7,14 +6,21 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-class Catalog(Base):
-    __tablename__ = 'catalog'
+class Category(Base):
+    __tablename__ = 'category'
 
     name = Column(String(80), nullable = False)
     id = Column(Integer, primary_key = True)
 
-class CatalogItem(Base):
-    __tablename__ = 'catalog_item'
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+class CategoryItem(Base):
+    __tablename__ = 'category_item'
 
     name = Column(String(80), nullable = False)
     id = Column(Integer, primary_key = True)
@@ -22,8 +28,8 @@ class CatalogItem(Base):
     size = Column(String(250)) 
     price = Column(String(8))
     description = Column(String(250))
-    catalog_id = Column(Integer, ForeignKey('catalog.id'))
-    catalog = relationship(Catalog)
+    category_id = Column(Integer, ForeignKey('category.id'))
+    category = relationship(Category)
 
     @property
     def serialize(self):
@@ -38,5 +44,5 @@ class CatalogItem(Base):
 
 
 
-engine = create_engine('sqlite:///catalogitems.db')
+engine = create_engine('sqlite:///categoryitems.db')
 Base.metadata.create_all(engine)
