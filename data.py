@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Category, Base, CategoryItem
+from models import Base, User, Category, CategoryItem
 
-engine = create_engine('sqlite:///categoryitems.db')
+engine = create_engine('sqlite:///catalog.db')
 # Bind the engine to the metadata of the Base class so that the
 # declaratives can be accessed through a DBSession instance
 Base.metadata.bind = engine
@@ -26,13 +26,13 @@ session.add(category1)
 session.commit()
 
 categoryItem1 = CategoryItem(name="HOME T-SHIRT", description="Official collaboration with Bob Dylan",
-                     price="$40.00", color="Black", size="Large", category=category1)
+                             price="$40.00", color="Black", size="Large", category=category1)
 
 session.add(categoryItem1)
 session.commit()
 
 categoryItem2 = CategoryItem(name="DARTS T-SHIRT", description="Official collaboration with Bob Dylan",
-                     price="$40.00", color="White", size="Large", category=category1)
+                             price="$40.00", color="White", size="Large", category=category1)
 
 session.add(categoryItem2)
 session.commit()
@@ -46,7 +46,7 @@ session.commit()
 
 
 categoryItem1 = CategoryItem(name="RIDE HOODY", description="Official collaboration with Bob Dylan",
-                     price="$90.00", color="Black", size="Large", category=category2)
+                             price="$90.00", color="Black", size="Large", category=category2)
 
 session.add(categoryItem1)
 session.commit()
@@ -60,7 +60,7 @@ session.commit()
 
 
 categoryItem1 = CategoryItem(name="FOREVER HAT", description="Official collaboration with Bob Dylan, low profile trucker snapback with patch",
-                     price="$36.00", color="Black", size="Large", category=category3)
+                             price="$36.00", color="Black", size="Large", category=category3)
 
 session.add(categoryItem1)
 session.commit()
@@ -74,10 +74,10 @@ session.commit()
 
 
 categoryItem1 = CategoryItem(name="TYPHOON PANTS", description="All over custom printed denim pant",
-                     price="$100.00", color="Black", size="Medium", category=category4)
+                             price="$100.00", color="Black", size="Medium", category=category4)
 
 session.add(categoryItem1)
 session.commit()
 
 
-print "added category items!"
+print("added category items!")
