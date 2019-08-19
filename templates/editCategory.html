@@ -1,15 +1,9 @@
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <link rel=stylesheet type=text/css href="">
-</head>
-
-
-<body>
-    <div>
-        <h1>Edit {{category.name}}</h1>
-
-
+{% block section %}
+<div class="container">
+    <h1>Edit {{category.name}}</h1>
+    <div class="col">
         <form action="{{ url_for('editCategory', category_id = category.id)}}" method="post">
             <div>
                 <label for="name">Name:</label>
@@ -20,6 +14,5 @@
         </form>
 
     </div>
-</body>
-
-</html>
+</div>
+{% endblock %}

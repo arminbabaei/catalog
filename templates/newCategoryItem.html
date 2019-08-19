@@ -1,36 +1,28 @@
-<html>
+{% extends 'base.html' %}
 
-<head>
+{% block section %}
+<div class="container">
+    <h1>New Category Item</h1>
 
-</head>
+    <form action="{{ url_for('newCategoryItem', category_id=category_id )}}" method='post'>
 
+        <label for="name">Name:</label>
+        <div><textarea type="text" maxlength="100" rows="1" name='name' required></textarea></div>
 
-<body>
-    <div>
-        <h1>New Category Item</h1>
+        <label for="price">Price:</label>
+        <div>$ <textarea maxlength="100" rows="1" name='price' required></textarea></div>
 
-        <form action="{{ url_for('newCategoryItem', category_id=category_id )}}" method='post'>
+        <label for="size">Size:</label>
+        <div><textarea name='size' maxlength="250" rows="3" required></textarea></div>
 
-            <label for="name">Name:</label>
-            <div><textarea type="text" maxlength="100" rows="1" name='name' required></textarea></div>
+        <label for="color">Color:</label>
+        <div><textarea name='color' maxlength="250" rows="3" required></textarea></div>
 
-            <label for="price">Price:</label>
-            <div>$ <textarea maxlength="100" rows="1" name='price' required></textarea></div>
+        <label for="description">Description:</label>
+        <div><textarea name='description' maxlength="250" rows="3" required></textarea></div>
+        </br>
+        <input type='submit' value='Create'>
 
-            <label for="size">Size:</label>
-            <div><textarea name='size' maxlength="250" rows="3" required></textarea></div>
-
-            <label for="color">Color:</label>
-            <div><textarea name='color' maxlength="250" rows="3" required></textarea></div>
-
-            <label for="description">Description:</label>
-            <div><textarea name='description' maxlength="250" rows="3" required></textarea></div>
-            </br>
-            <input type='submit' value='Create'>
-
-        </form>
-    </div>
-</body>
-
-
-</html>
+    </form>
+</div>
+{% endblock %}

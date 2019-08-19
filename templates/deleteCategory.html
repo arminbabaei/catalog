@@ -1,24 +1,19 @@
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <link rel=stylesheet type=text/css href="">
-</head>
+{% block section %}
+<div class="container">
 
+    <div class="col">
 
-<body>
-    <div>
         <h1>Delete {{category.name}}</h1>
-
-        <h2> Are you sure you want to delete {{category.name}}? </h2>
-
-        <form action=# method='post'>
-
-            <button type="submit">Delete</button>
-            <a href="{{url_for('showCategories')}}"><button>Cancel</button></a>
-
-        </form>
+        <h2>Are you sure you want to delete {{category.name}}? </h2>
 
     </div>
-</body>
+    <form action=# method='post'>
 
-</html>
+        <button type="submit">Delete</button>
+        <a href="{{url_for('showCategories')}}"><button>Cancel</button></a>
+
+    </form>
+</div>
+{% endblock %}

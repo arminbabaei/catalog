@@ -1,21 +1,13 @@
-<html>
+{% extends 'base.html' %}
 
-<head>
+{% block section %}
+<div class="container">
+    <h1>New Catalog</h1>
 
-</head>
-
-
-<body>
-    <div>
-        <h1>New Catalog</h1>
-
-        <form action="#" method="post">
-            <label for="name">Name:</label>
-            <input type="text" maxlength="100" name="name">
-            <button type="submit" id="submit" type="submit">Create</button>
-        </form>
-
-    </div>
-</body>
-
-</html>
+    <form action="#" method="post">
+        <label for="name">Name:</label>
+        <input type="text" maxlength="100" name="name">
+        <button type="submit" id="submit" type="submit">Create</button>
+    </form>
+</div>
+{% endblock %}
