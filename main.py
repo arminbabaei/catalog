@@ -174,10 +174,11 @@ def deleteCategory(category_id):
 
 @app.route('/catalog/<int:category_id>/items')
 def showCategoryItems(category_id):
+    categories = session.query(Category)
     category = session.query(Category).filter_by(id=category_id).one()
     categoryItems = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
-    return render_template('categoryItems.html', category=category, categoryItems=categoryItems, category_id=category_id)
+    return render_template('categoryItems.html', category=category, categoryItems=categoryItems, category_id=category_id, categories=categories)
 
 
 @app.route('/catalog/<int:category_id>/items/new', methods=['GET', 'POST'])

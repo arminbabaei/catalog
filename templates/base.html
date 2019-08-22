@@ -48,7 +48,7 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Catalog
                     </a>
-                    <div class="dropdown-menu dropdown-default" aria-labelledby="navbarDropdown">
+                    <div id='category_dropdown' class="dropdown-menu dropdown-default" aria-labelledby="navbarDropdown">
                         {% for category in categories %}
                         <a class="dropdown-item"
                             href="{{url_for('showCategoryItems', category_id = category.id )}}">{{category.name}}</a>
