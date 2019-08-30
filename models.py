@@ -1,10 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 from passlib.apps import custom_app_context as pwd_context
-import random
-import string
+import random, string
 from itsdangerous import(
     TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 
@@ -12,13 +11,13 @@ Base = declarative_base()
 secret_key = ''.join(random.choice(
     string.ascii_uppercase + string.digits) for x in range(32))
 
-
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
+    creation_date = Column(Date)
     username = Column(String(32), index=True)
-    picture = Column(String(32))
-    email = Column(String, index=True)
+    picture = Column(String(250))
+    email = Column(String(250), index=True)
     password_hash = Column(String(64))
 
     def hash_password(self, password):
@@ -37,34 +36,44 @@ class User(Base):
         try:
             data = s.loads(token)
         except SignatureExpired:
-            # Valid Token, but expired
             return None
         except BadSignature:
-            # Invalid Token
             return None
         user_id = data['id']
         return user_id
-
-
-class Category(Base):
-    __tablename__ = 'category'
-
-    name = Column(String(80), nullable=False)
-    id = Column(Integer, primary_key=True)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
+            'creation_date': self.creation_date,
+            'username': self.username,
+            'picture': self.picture,
+            'email': self.email
+        }
+
+
+class Category(Base):
+    __tablename__ = 'category'
+    id = Column(Integer, primary_key=True)
+    creation_date = Column(Date)
+    name = Column(String(80), nullable=False)
+    
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'creation_date': self.creation_date,
             'name': self.name
         }
 
 
 class CategoryItem(Base):
     __tablename__ = 'category_item'
-
-    name = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    creation_date = Column(Date)
     color = Column(String(250))
     size = Column(String(250))
     price = Column(String(8))
@@ -76,6 +85,7 @@ class CategoryItem(Base):
     def serialize(self):
         return {
             'id': self.id,
+            'creation_date': self.creation_date,
             'name': self.name,
             'color': self.color,
             'size': self.size,

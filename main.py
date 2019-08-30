@@ -1,11 +1,13 @@
 import json, httplib2, requests
-from models import Base, Category, CategoryItem, User
+
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, g, make_response
 from flask_httpauth import HTTPBasicAuth
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from models import Base, Category, CategoryItem, User
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -34,12 +36,8 @@ def verify_password(username_or_token, password):
 @app.route('/oauth/<provider>', methods=['POST'])
 def oauth(provider):
 
-    # STEP 1 - Parse the auth code
-
     auth_code = request.get_json(force=True)
     if provider == 'google':
-
-    # STEP 2 - Exchange for a token
 
         try:
             oauth_flow = flow_from_clientsecrets(
@@ -62,15 +60,14 @@ def oauth(provider):
             response = make_response(json.dumps(result.get('error')), 500)
             response.headers['Content-Type'] = 'application/json'
 
-    # STEP 3 - Find User or make a new one
-
-        # Get user info
         h = httplib2.Http()
         userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
         params = {'access_token': credentials.access_token, 'alt': 'json'}
 
         answer = requests.get(userinfo_url, params=params)
         data = answer.json()
+
+        print(data)
 
         name = data['name']
         picture = data['picture']
@@ -82,10 +79,8 @@ def oauth(provider):
             session.add(user)
             session.commit()
 
-    # STEP 4 - Make token
         token = user.generate_auth_token(600)
 
-    # STEP 5 - Send back token to the client
         return jsonify({'token': token.decode('ascii')})
     else:
         return 'Unrecoginized Provider'
@@ -99,7 +94,6 @@ def get_auth_token():
 
 
 @app.route('/users', methods=['POST'])
-# @auth.login_required
 def new_user():
     username = request.json.get('username')
     password = request.json.get('password')
@@ -134,7 +128,6 @@ def profile():
 def index():
     categories = session.query(Category)
     return render_template('index.html', categories=categories)
-
 
 @app.route('/catalog/new', methods=['GET', 'POST'])
 @auth.login_required
