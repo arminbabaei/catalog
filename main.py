@@ -215,19 +215,27 @@ def deleteCategoryItem(category_id, item_id):
         return render_template('deleteCategoryItem.html', category_id=category_id, item_id=item_id, item=categoryItemToDelete)
     
     
-@app.route('/api/catalog')
-@auth.login_required
+@app.route('/catalog/JSON')
+#@auth.login_required
 def showCategoriesJSON():
-    categories = session.query(Category)
+    categories = session.query(Category).all()
     return jsonify(categoryItems=[i.serialize for i in categories])
     
     
-@app.route('/api/catalog/<int:category_id>/items')
-@auth.login_required
+@app.route('/catalog/<int:category_id>/items/JSON')
+#@auth.login_required
 def showCategoryItemsJSON(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
     categoryItems = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
     return jsonify(categoryItems=[i.serialize for i in categoryItems])
+
+
+@app.route('/catalog/<int:category_id>/items/<int:item_id>/JSON')
+#@auth.login_required
+def showItemJSON(category_id, item_id):
+    categoryItem = session.query(CategoryItem).filter_by(id=item_id).one()
+    return jsonify(categoryItem=categoryItem.serialize)
 
 
 @app.route('/api/users/<int:id>')
