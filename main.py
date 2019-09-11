@@ -27,15 +27,50 @@ def verify_password(username_or_token, password):
         user = session.query(User).filter_by(id=user_id).one()
     else:
         user = session.query(User).filter_by(
-            username=username_or_token).first()
+            name=username_or_token).first()
         if not user or not user.verify_password(password):
             return False
     g.user = user
     return True
 
+
+@app.route('/token')
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    return jsonify({'token': token.decode('ascii')})
+
+
+@app.route('/users', methods=['POST'])
+def new_user():
+    name = request.json.get('name')
+    password = request.json.get('password')
+    if name is None or password is None:
+        abort(400) 
+
+    if session.query(User).filter_by(name=name).first() is not None:
+        None 
+        user = session.query(User).filter_by(name=name).first()
+        return jsonify({'message': 'user already exists'}), 200
+
+    user = User(name=name)
+    user.hash_password(password)
+    session.add(user)
+    session.commit()
+    return jsonify({'name': user.name}), 201
+
+
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    # return "The current session state is %s" % login_session['state']
+    return render_template('login.html', STATE=state)
+
+
 @app.route('/oauth/<provider>', methods=['POST'])
 def oauth(provider):
-
     auth_code = request.get_json(force=True)
     if provider == 'google':
 
@@ -75,7 +110,7 @@ def oauth(provider):
 
         user = session.query(User).filter_by(email=email).first()
         if not user:
-            user = User(username=name, picture=picture, email=email)
+            user = User(name=name, picture=picture, email=email)
             session.add(user)
             session.commit()
 
@@ -85,84 +120,85 @@ def oauth(provider):
     else:
         return 'Unrecoginized Provider'
 
+# User Helper Functions
 
-@app.route('/token')
-@auth.login_required
-def get_auth_token():
-    token = g.user.generate_auth_token()
-    return jsonify({'token': token.decode('ascii')})
-
-
-@app.route('/users', methods=['POST'])
-def new_user():
-    username = request.json.get('username')
-    password = request.json.get('password')
-    if username is None or password is None:
-        abort(400) 
-
-    if session.query(User).filter_by(username=username).first() is not None:
-        None 
-        user = session.query(User).filter_by(username=username).first()
-        return jsonify({'message': 'user already exists'}), 200
-
-    user = User(username=username)
-    user.hash_password(password)
-    session.add(user)
+def createUser(login_session):
+    newUser = User(name=login_session['name'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
     session.commit()
-    return jsonify({'username': user.username}), 201
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
 
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 @app.route('/signup')
 def signup():
     return render_template('signup.tml')
 
+
 @app.route('/profile')
 def profile():
     return render_template('profile.html')
 
+
 @app.route('/')
+#@app.route('/catalog')
 def index():
     categories = session.query(Category)
-    return render_template('index.html', categories=categories)
+    categoryItems = session.query(CategoryItem).all()
+    return render_template('index.html', categoryItems=categoryItems, categories=categories)
+
 
 @app.route('/catalog/new', methods=['GET', 'POST'])
-@auth.login_required
+#@auth.login_required
 def newCategory():
+    category = ''
+    categories = session.query(Category)
     if request.method == 'POST':
         newCategory = Category(name=request.form['name'])
         session.add(newCategory)
         session.commit()
-        return redirect(url_for('showCategories'))
+        return redirect(url_for('index'))
     else:
-        return render_template('newCategory.html')
+        return render_template('newCategory.html', category = '', categories=categories)
 
 
 @app.route('/catalog/<int:category_id>/edit', methods=['GET', 'POST'])
-@auth.login_required
+#@auth.login_required
 def editCategory(category_id):
+    categories = session.query(Category)
     editedCategory = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = request.form['name']
-            return redirect(url_for('showCategories'))
+            return redirect(url_for('index'))
     else:
-        return render_template('editCategory.html', category=editedCategory)
+        return render_template('editCategory.html', category=editedCategory, categories=categories)
 
 
 @app.route('/catalog/<int:category_id>/delete', methods=['GET', 'POST'])
-@auth.login_required
+#@auth.login_required
 def deleteCategory(category_id):
+    categories = session.query(Category)
     categoryToDelete = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         session.delete(categoryToDelete)
         session.commit()
-        return redirect(url_for('showCategories', category_id=category_id))
+        return redirect(url_for('index', category_id=category_id))
     else:
-        return render_template('deleteCategory.html', category=categoryToDelete)
+        return render_template('deleteCategory.html', category=categoryToDelete , categories=categories)
 
 
 @app.route('/catalog/<int:category_id>/items')
@@ -175,8 +211,8 @@ def showCategoryItems(category_id):
 
 
 @app.route('/catalog/<int:category_id>/items/new', methods=['GET', 'POST'])
-@auth.login_required
-def newCategoryItem(category_id):
+#@auth.login_required
+def newCategoryItem(category_id):  
     if request.method == 'POST':
         newCategoryItem = CategoryItem(name=request.form['name'], description=request.form['description'],
                                        price=request.form['price'], size=request.form['size'], color=request.form['color'], category_id=category_id)
@@ -184,11 +220,12 @@ def newCategoryItem(category_id):
         session.commit()
         return redirect(url_for('showCategoryItems', category_id=category_id))
     else:
-        return render_template('newCategoryItem.html', category_id=category_id)
+        categories = session.query(Category)
+        return render_template('newCategoryItem.html', category_id=category_id, categories=categories)
 
 
 @app.route('/catalog/<int:category_id>/items/<int:item_id>/edit', methods=['GET', 'POST'])
-@auth.login_required
+#@auth.login_required
 def editCategoryItem(category_id, item_id):
     editedCategoryItem = session.query(
         CategoryItem).filter_by(id=item_id).one()
@@ -199,11 +236,12 @@ def editCategoryItem(category_id, item_id):
         session.commit()
         return redirect(url_for('showCategoryItems', category_id=category_id, item_id=item_id))
     else:
-        return render_template('editCategoryItem.html', category_id=category_id, item_id=item_id, item=editedCategoryItem)
+        categories = session.query(Category)
+        return render_template('editCategoryItem.html', category_id=category_id, item_id=item_id, item=editedCategoryItem, categories=categories)
 
 
 @app.route('/catalog/<int:category_id>/items/<int:item_id>/delete', methods=['GET', 'POST'])
-@auth.login_required
+#@auth.login_required
 def deleteCategoryItem(category_id, item_id):
     categoryItemToDelete = session.query(
         CategoryItem).filter_by(id=item_id).one()
@@ -217,7 +255,7 @@ def deleteCategoryItem(category_id, item_id):
     
 @app.route('/catalog/JSON')
 #@auth.login_required
-def showCategoriesJSON():
+def indexJSON():
     categories = session.query(Category).all()
     return jsonify(categoryItems=[i.serialize for i in categories])
     
@@ -238,15 +276,15 @@ def showItemJSON(category_id, item_id):
     return jsonify(categoryItem=categoryItem.serialize)
 
 
-@app.route('/api/users/<int:id>')
+@app.route('/users/<int:id>/JSON')
 def get_user(id):
     user = session.query(User).filter_by(id=id).one()
     if not user:
         abort(400)
-    return jsonify({'username': user.username})
+    return jsonify({'name': user.name})
 
         
 if __name__ == '__main__':
-    # app.debug = True
+    app.debug = True
     # app.run(host='0.0.0.0', port=8000)
     app.run()

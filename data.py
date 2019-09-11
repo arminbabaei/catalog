@@ -11,66 +11,35 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+user1 = User(id=1, name="Armin", email="armin.babaei@icloud.com" , creation_date=datetime.now())
 
-# Items for T-SHIRTS
-category1 = Category(name="T-SHIRTS")
+session.add(user1)
+session.commit()
+
+category1 = Category(name="TOP")
 
 session.add(category1)
 session.commit()
 
-categoryItem1 = CategoryItem(name="HOME T-SHIRT", description="Official collaboration with Bob Dylan",
-                             price="$40.00", color="Black", size="Large", creation_date=datetime.now(), category=category1)
+categoryItem1 = CategoryItem(name="ARMIN's Shirt", description="ARMIN's Embroidered logo",
+                             price="$400.00", color="Custom", size="Custom", user_id=1, creation_date=datetime.now(), category=category1)
 
 session.add(categoryItem1)
 session.commit()
 
-categoryItem2 = CategoryItem(name="DARTS T-SHIRT", description="Official collaboration with Bob Dylan",
-                             price="$40.00", color="White", size="Large", creation_date=datetime.now(), category=category1)
 
-session.add(categoryItem2)
-session.commit()
-
-
-# Items For SWEATSHIRTS
-category2 = Category(name="SWEATSHIRTS")
+category2 = Category(name="BOTTOM")
 
 session.add(category2)
 session.commit()
 
 
-categoryItem1 = CategoryItem(name="RIDE HOODY", description="Official collaboration with Bob Dylan",
-                             price="$90.00", color="Black", size="Large", creation_date=datetime.now(), category=category2)
+categoryItem1 = CategoryItem(name="ARMIN's Pants", description="ARMIN's Embroidered logo",
+                             price="$900.00", color="Custom", size="Custom", user_id=1, creation_date=datetime.now(), category=category2)
 
 session.add(categoryItem1)
 session.commit()
 
-
-# Items for HEADWEAR
-category3 = Category(name="HEADWEAR")
-
-session.add(category1)
-session.commit()
-
-
-categoryItem1 = CategoryItem(name="FOREVER HAT", description="Official collaboration with Bob Dylan, low profile trucker snapback with patch",
-                             price="$36.00", color="Black", size="Large", creation_date=datetime.now(), category=category3)
-
-session.add(categoryItem1)
-session.commit()
-
-
-# Items for FOOTWEAR
-category4 = Category(name="FOOTWEAR")
-
-session.add(category1)
-session.commit()
-
-
-categoryItem1 = CategoryItem(name="TYPHOON PANTS", description="All over custom printed denim pant",
-                             price="$100.00", color="Black", size="Medium", creation_date=datetime.now(), category=category4)
-
-session.add(categoryItem1)
-session.commit()
 
 
 print("added category items!")

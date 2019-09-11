@@ -3,6 +3,9 @@
 {% block section %}
 <div class="container">
     <div class="col">
+        <h1>Category Items for Category {{category.name}}</h1>
+        <h4>Edit Category <a href="{{url_for('editCategory',category_id = category.id)}}">{{category.name}}</a></h4>
+        <h4>Delete Category <a href="{{url_for('deleteCategory',category_id = category.id)}}">{{category.name}}</a></h4>
         <div class="row">
             <p class="card-title"></p>
             {% for i in categoryItems %}
@@ -21,10 +24,10 @@
                         <p class="card-text">{{i.color}} </p>
                         <p class="card-text">{{i.description}}</p>
 
-                        <button href="{{url_for('editCategoryItem',category_id = category.id, item_id=i.id)}}"
-                            class="btn btn-light">Edit</button>
-                        <button href="{{url_for('deleteCategoryItem', category_id = category.id, item_id=i.id)}}"
-                            class="btn btn-dark">Delete</button>
+                        <a href="{{url_for('editCategoryItem',category_id = category.id, item_id=i.id)}}">
+                            <button class="btn btn-light">Edit</button></a>
+                        <a href="{{url_for('deleteCategoryItem', category_id = category.id, item_id=i.id)}}">
+                            <button class="btn btn-dark">Delete</button></a>
                     </div>
                 </div>
             </div>

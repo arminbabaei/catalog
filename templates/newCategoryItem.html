@@ -2,27 +2,31 @@
 
 {% block section %}
 <div class="container">
-    <h1>New Category Item</h1>
+    <div class="col">
+        <h1>New Category Item</h1>
+        <form>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <textarea class="form-control" id="name" rows="1">{{item.name }}</textarea>
 
-    <form action="{{ url_for('newCategoryItem', category_id=category_id )}}" method='post'>
+                <label for="price">Price</label>
+                <textarea class="form-control" id="price" rows="1">{{item.price }}</textarea>
 
-        <label for="name">Name:</label>
-        <div><textarea type="text" maxlength="100" rows="1" name='name' required></textarea></div>
+                <label for="size">Size</label>
+                <textarea class="form-control" id="size" rows="1">{{item.size}}</textarea>
 
-        <label for="price">Price:</label>
-        <div>$ <textarea maxlength="100" rows="1" name='price' required></textarea></div>
+                <label for="color">Color</label>
+                <textarea class="form-control" id="color" rows="1">{{item.color}}</textarea>
 
-        <label for="size">Size:</label>
-        <div><textarea name='size' maxlength="250" rows="3" required></textarea></div>
-
-        <label for="color">Color:</label>
-        <div><textarea name='color' maxlength="250" rows="3" required></textarea></div>
-
-        <label for="description">Description:</label>
-        <div><textarea name='description' maxlength="250" rows="3" required></textarea></div>
-        </br>
-        <input type='submit' value='Create'>
-
-    </form>
+                <label for="description">Color</label>
+                <textarea class="form-control" id="description" rows="2">{{item.description}}</textarea>
+            </div>
+            <div>
+                <button class="btn btn-light" type="submit">Save</button>
+                <a href="{{url_for('showCategoryItems', category_id = category_id)}}"><button
+                    class="btn btn-dark">Cancel</button></a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

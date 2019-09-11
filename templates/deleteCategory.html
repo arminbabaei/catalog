@@ -2,18 +2,17 @@
 
 {% block section %}
 <div class="container">
-
     <div class="col">
-
-        <h1>Delete {{category.name}}</h1>
-        <h2>Are you sure you want to delete {{category.name}}? </h2>
-
+        <h1>Delete Category {{category.name}}</h1>
+        <h2>Are you sure you want to delete Category {{category.name}}? </h2>
+        <form>
+            <div class="form-group">
+            </div>
+            <div>
+                <button class="btn btn-light" type="submit">Save</button>
+                <a href="{{url_for('index')}}"><button class="btn btn-dark">Cancel</button></a>
+            </div>
+        </form>
     </div>
-    <form action=# method='post'>
-
-        <button type="submit">Delete</button>
-        <a href="{{url_for('showCategories')}}"><button>Cancel</button></a>
-
-    </form>
 </div>
 {% endblock %}

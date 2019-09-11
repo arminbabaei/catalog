@@ -2,31 +2,31 @@
 
 {% block section %}
 <div class="container">
-    <h1>Edit Category Item</h1>
-    <form>
-        <div class="form-group">
-            <label for="nameFormControlTextarea">Name</label>
-            <textarea class="form-control" id="nameFormControlTextarea" name="name" rows="1">{{item.name }}</textarea>
+    <div class="col">
+        <h1>Edit Category Item {{item.name}}</h1>
+        <form>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <textarea class="form-control" id="name" rows="1">{{item.name }}</textarea>
 
-            <label for="priceFormControlTextarea">Price</label>
-            <textarea class="form-control" id="priceFormControlTextarea" name="price"
-                rows="1">{{item.price }}</textarea>
+                <label for="price">Price</label>
+                <textarea class="form-control" id="price" rows="1">{{item.price }}</textarea>
 
-            <label for="sizeFormControlTextarea">Size</label>
-            <textarea class="form-control" id="sizeFormControlTextarea" name="size" rows="1">{{item.size}}</textarea>
+                <label for="size">Size</label>
+                <textarea class="form-control" id="size" rows="1">{{item.size}}</textarea>
 
-            <label for="colorFormControlTextarea">Color</label>
-            <textarea class="form-control" id="colorFormControlTextarea" name="color" rows="1">{{item.color}}</textarea>
+                <label for="color">Color</label>
+                <textarea class="form-control" id="color" rows="1">{{item.color}}</textarea>
 
-            <label for="descriptionFormControlTextarea">Color</label>
-            <textarea class="form-control" id="descriptionFormControlTextarea" name="description"
-                rows="2">{{item.description}}</textarea>
-        </div>
-        <div>
-            <button class="btn btn-success" type="submit">Save</button>
-            <a href="{{url_for('showCategoryItems', category_id = category_id, item_id = item_id)}}"><button
-                    class="btn btn-warning">Cancel</button></a>
-        </div>
-    </form>
+                <label for="description">Color</label>
+                <textarea class="form-control" id="description" rows="2">{{item.description}}</textarea>
+            </div>
+            <div>
+                <button class="btn btn-light" type="submit">Save</button>
+                <a href="{{url_for('showCategoryItems', category_id = category_id)}}"><button
+                    class="btn btn-dark">Cancel</button></a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

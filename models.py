@@ -14,11 +14,11 @@ secret_key = ''.join(random.choice(
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    creation_date = Column(Date)
-    username = Column(String(32), index=True)
+    name = Column(String(32), nullable=False)
+    email = Column(String(250), nullable=False)
     picture = Column(String(250))
-    email = Column(String(250), index=True)
     password_hash = Column(String(64))
+    creation_date = Column(Date)
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
@@ -47,7 +47,7 @@ class User(Base):
         return {
             'id': self.id,
             'creation_date': self.creation_date,
-            'username': self.username,
+            'name': self.name,
             'picture': self.picture,
             'email': self.email
         }
@@ -56,8 +56,10 @@ class User(Base):
 class Category(Base):
     __tablename__ = 'category'
     id = Column(Integer, primary_key=True)
-    creation_date = Column(Date)
     name = Column(String(80), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    creation_date = Column(Date)
     
 
     @property
@@ -65,7 +67,8 @@ class Category(Base):
         return {
             'id': self.id,
             'creation_date': self.creation_date,
-            'name': self.name
+            'name': self.name,
+            'user_id': self.user_id
         }
 
 
@@ -73,13 +76,16 @@ class CategoryItem(Base):
     __tablename__ = 'category_item'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    creation_date = Column(Date)
     color = Column(String(250))
     size = Column(String(250))
     price = Column(String(8))
     description = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    creation_date = Column(Date)
+    
 
     @property
     def serialize(self):
@@ -90,7 +96,8 @@ class CategoryItem(Base):
             'color': self.color,
             'size': self.size,
             'price': self.price,
-            'description': self.description
+            'description': self.description,
+            'user_id': self.user_id
         }
 
 
