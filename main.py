@@ -154,28 +154,30 @@ def profile():
 
 
 @app.route('/')
-#@app.route('/catalog')
+@app.route('/catalog')
 def index():
+    category = ''
     categories = session.query(Category)
     categoryItems = session.query(CategoryItem).all()
-    return render_template('index.html', categoryItems=categoryItems, categories=categories)
+    return render_template('index.html', category = '', categoryItems=categoryItems, categories=categories)
 
 
-@app.route('/catalog/new', methods=['GET', 'POST'])
+@app.route('/category/new', methods=['GET', 'POST'])
 #@auth.login_required
 def newCategory():
     category = ''
     categories = session.query(Category)
     if request.method == 'POST':
-        newCategory = Category(name=request.form['name'])
+        newCategory = Category(name=request.form['name'], user_id=login_session['user_id'])
         session.add(newCategory)
+        flash('New Category %s Successfully Created' % newCategory.name)
         session.commit()
         return redirect(url_for('index'))
     else:
         return render_template('newCategory.html', category = '', categories=categories)
 
 
-@app.route('/catalog/<int:category_id>/edit', methods=['GET', 'POST'])
+@app.route('/categoty/<int:category_id>/edit', methods=['GET', 'POST'])
 #@auth.login_required
 def editCategory(category_id):
     categories = session.query(Category)
@@ -188,7 +190,7 @@ def editCategory(category_id):
         return render_template('editCategory.html', category=editedCategory, categories=categories)
 
 
-@app.route('/catalog/<int:category_id>/delete', methods=['GET', 'POST'])
+@app.route('/categoty/<int:category_id>/delete', methods=['GET', 'POST'])
 #@auth.login_required
 def deleteCategory(category_id):
     categories = session.query(Category)
@@ -201,7 +203,7 @@ def deleteCategory(category_id):
         return render_template('deleteCategory.html', category=categoryToDelete , categories=categories)
 
 
-@app.route('/catalog/<int:category_id>/items')
+@app.route('/categoty/<int:category_id>/items')
 def showCategoryItems(category_id):
     categories = session.query(Category)
     category = session.query(Category).filter_by(id=category_id).one()
@@ -210,21 +212,23 @@ def showCategoryItems(category_id):
     return render_template('categoryItems.html', category=category, categoryItems=categoryItems, category_id=category_id, categories=categories)
 
 
-@app.route('/catalog/<int:category_id>/items/new', methods=['GET', 'POST'])
+@app.route('/categoty/<int:category_id>/items/new', methods=['GET', 'POST'])
 #@auth.login_required
-def newCategoryItem(category_id):  
+def newCategoryItem(category_id): 
+    item = '' 
+    category = session.query(Category).filter_by(id=category_id).one() 
     if request.method == 'POST':
         newCategoryItem = CategoryItem(name=request.form['name'], description=request.form['description'],
-                                       price=request.form['price'], size=request.form['size'], color=request.form['color'], category_id=category_id)
+                                       price=request.form['price'], size=request.form['size'], color=request.form['color'], category_id=category_id, user_id=category.user_id)
         session.add(newItem)
         session.commit()
         return redirect(url_for('showCategoryItems', category_id=category_id))
     else:
         categories = session.query(Category)
-        return render_template('newCategoryItem.html', category_id=category_id, categories=categories)
+        return render_template('newCategoryItem.html', category_id=category_id, categories=categories,item=item)
 
 
-@app.route('/catalog/<int:category_id>/items/<int:item_id>/edit', methods=['GET', 'POST'])
+@app.route('/categoty/<int:category_id>/items/<int:item_id>/edit', methods=['GET', 'POST'])
 #@auth.login_required
 def editCategoryItem(category_id, item_id):
     editedCategoryItem = session.query(
@@ -240,7 +244,7 @@ def editCategoryItem(category_id, item_id):
         return render_template('editCategoryItem.html', category_id=category_id, item_id=item_id, item=editedCategoryItem, categories=categories)
 
 
-@app.route('/catalog/<int:category_id>/items/<int:item_id>/delete', methods=['GET', 'POST'])
+@app.route('/categoty/<int:category_id>/items/<int:item_id>/delete', methods=['GET', 'POST'])
 #@auth.login_required
 def deleteCategoryItem(category_id, item_id):
     categoryItemToDelete = session.query(
@@ -253,14 +257,14 @@ def deleteCategoryItem(category_id, item_id):
         return render_template('deleteCategoryItem.html', category_id=category_id, item_id=item_id, item=categoryItemToDelete)
     
     
-@app.route('/catalog/JSON')
+@app.route('/categoty/JSON')
 #@auth.login_required
 def indexJSON():
     categories = session.query(Category).all()
     return jsonify(categoryItems=[i.serialize for i in categories])
     
     
-@app.route('/catalog/<int:category_id>/items/JSON')
+@app.route('/categoty/<int:category_id>/items/JSON')
 #@auth.login_required
 def showCategoryItemsJSON(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
@@ -269,7 +273,7 @@ def showCategoryItemsJSON(category_id):
     return jsonify(categoryItems=[i.serialize for i in categoryItems])
 
 
-@app.route('/catalog/<int:category_id>/items/<int:item_id>/JSON')
+@app.route('/categoty/<int:category_id>/items/<int:item_id>/JSON')
 #@auth.login_required
 def showItemJSON(category_id, item_id):
     categoryItem = session.query(CategoryItem).filter_by(id=item_id).one()

@@ -4,6 +4,8 @@
 <div class="container">
     <div class="col">
         <h1>Category Items for Category {{category.name}}</h1>
+        <h4>Add a <a href="{{url_for('newCategoryItem',category_id = category.id, item=item)}}">New Category Item</a></h4>
+
         <h4>Edit Category <a href="{{url_for('editCategory',category_id = category.id)}}">{{category.name}}</a></h4>
         <h4>Delete Category <a href="{{url_for('deleteCategory',category_id = category.id)}}">{{category.name}}</a></h4>
         <div class="row">
