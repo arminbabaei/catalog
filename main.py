@@ -47,7 +47,7 @@ def oauth(provider):
         return response
     # Obtain authorization code
     code = request.data
-    print(code)
+    #print(code)
     if provider == 'google':
         # Upgrade the authorization code into a credentials object
         try:
@@ -109,7 +109,7 @@ def oauth(provider):
         #data = json.loads(answer.text)
         data = answer.json()
 
-        print(data)
+        #print(data)
 
         login_session['username'] = data["name"]
         login_session['picture'] = data["picture"]
@@ -131,7 +131,7 @@ def oauth(provider):
         output += login_session['picture']
         output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
         flash("you are now logged in as %s" % login_session['username'])
-        print("done!")
+        #print("done!")
         return output
 
     elif provider == 'facebook':
@@ -141,7 +141,7 @@ def oauth(provider):
             response.headers['Content-Type'] = 'application/json'
             return response
         access_token = request.data
-        print("access token received %s " % access_token)
+        #print("access token received %s " % access_token)
 
         app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
             'web']['app_id']
@@ -166,8 +166,8 @@ def oauth(provider):
         url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
-        print("url sent for API access:%s"% url)
-        print("API JSON result: %s" % result)
+        #print("url sent for API access:%s"% url)
+        #print("API JSON result: %s" % result)
         data = json.loads(result)
         login_session['provider'] = 'facebook'
         login_session['username'] = data["name"]
@@ -250,19 +250,19 @@ def fbdisconnect():
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
-        print('Access Token is None')
+        #print('Access Token is None')
         response = make_response(json.dumps(
             'Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In gdisconnect access token is %s', access_token)
-    print('User name is: ')
-    print(login_session['username'])
+    #print('In gdisconnect access token is %s', access_token)
+    #print('User name is: ')
+    #print(login_session['username'])
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print('result is ')
-    print(result)
+    #print('result is ')
+    #print(result)
     if result['status'] == '200':
         del login_session['access_token']
         del login_session['google_id']
