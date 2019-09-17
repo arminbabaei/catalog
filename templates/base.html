@@ -3,7 +3,6 @@
 
 <head>
     {% block header %}
-    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -12,16 +11,19 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
         integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+
+    <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id"
         content='395768933339-qqilcp6g6ghvbu3nk886v7mnarh3vrju.apps.googleusercontent.com'>
     <script>
         function start() {
             gapi.load('auth2', function () {
                 auth2 = gapi.auth2.init({
-                    client_id: '395768933339-qqilcp6g6ghvbu3nk886v7mnarh3vrju.apps.googleusercontent.com',
-                    scope: 'openid email'
+                    client_id: "395768933339-qqilcp6g6ghvbu3nk886v7mnarh3vrju.apps.googleusercontent.com",
+                    scope: "openid email"
                 });
             });
         }
@@ -34,7 +36,7 @@
 
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{url_for('index')}}">
+        <a class="navbar-brand" href="{{url_for('showCategories')}}">
             ARMIN
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -57,9 +59,13 @@
                     </div>
                 </li>
             </ul>
-            
+
             <span class="navbar-text">
-                username should go here 
+                {% if 'username' not in session %}
+                <a href="{{url_for('showLogin')}}">Click Here to Log in</a>
+                {% else %}
+                <a href="{{url_for('disconnect')}}">Disconnect</a>
+                {% endif %}
             </span>
 
             <ul class="navbar-nav ml-auto nav-flex-icons">
@@ -70,7 +76,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-default "
                         aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" id="signinButton" href="#">Sign In</a>
+                        <a class="dropdown-item" href="{{url_for('showLogin')}}">Login Page</a>
                         <a class="dropdown-item" href="#" onclick="signOut();">Sign out</a>
                         <a class="dropdown-item" href="{{url_for('profile')}}">Profile</a>
                     </div>
@@ -81,39 +87,10 @@
 
     <section>
         {% block section %}
+
         {% endblock %}
     </section>
 
-    <script>
-        $('#signinButton').click(function () {
-            function signInCallback(authResult) {
-                if (authResult['code']) {
-                    //$('#signinButton').attr('style', 'display: none');
-                    $.ajax({
-                        type: 'POST',
-                        url: '/oauth/google',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        contentType: 'application/json',
-                        success: function (result) {
-                            $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
-                            setTimeout(function () {
-                                window.location.href = "/";
-                            }, 2000);
-                        },
-                        processData: false,
-                        data: JSON.stringify(authResult)
-                    });
-                } else {
-                    // handle error
-                    console.log('There was an error: ' + authResult['error']);
-                    $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-                }
-            }
-            auth2.grantOfflineAccess().then(signInCallback);
-        });
-    </script>
     <script>
         function signOut() {
             var auth2 = gapi.auth2.getAuthInstance();

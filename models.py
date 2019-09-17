@@ -13,10 +13,12 @@ secret_key = ''.join(random.choice(
 
 class User(Base):
     __tablename__ = 'user'
+
     id = Column(Integer, primary_key=True)
     name = Column(String(32), nullable=False)
     email = Column(String(250), nullable=False)
     picture = Column(String(250))
+
     password_hash = Column(String(64))
     creation_date = Column(Date)
 
@@ -55,10 +57,12 @@ class User(Base):
 
 class Category(Base):
     __tablename__ = 'category'
+
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+
     creation_date = Column(Date)
     
 
@@ -74,6 +78,7 @@ class Category(Base):
 
 class CategoryItem(Base):
     __tablename__ = 'category_item'
+
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     color = Column(String(250))
@@ -84,6 +89,7 @@ class CategoryItem(Base):
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    
     creation_date = Column(Date)
     
 
