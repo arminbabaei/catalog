@@ -18,6 +18,7 @@ from models import Base, Category, CategoryItem, User
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+app.secret_key = "super secret key"
 
 engine = create_engine('postgresql://catalog:catalog@localhost:5432/catalog')
 Base.metadata.bind = engine
@@ -361,7 +362,7 @@ def showCategories():
     category = ''
     categories = session.query(Category).order_by(Category.name.asc())
     categoryItems = session.query(CategoryItem).all()
-    print(login_session)
+    # print(login_session)
     if 'username' not in login_session:
         return render_template(
             'publicCategories.html',
@@ -451,9 +452,9 @@ def showCategoryItems(category_id):
     creator = getUserInfo(category.user_id)
     categoryItems = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
-    print('the login_session is %s ' % login_session)
-    print('the creator.id is %s' % creator.id)
-    print("the login_session['user_id'] is %s" % login_session['user_id'])
+    # print('the login_session is %s ' % login_session)
+    # print('the creator.id is %s' % creator.id)
+    # print("the login_session['user_id'] is %s" % login_session['user_id'])
     if 'username' not in login_session or \
             creator.id != login_session['user_id']:
         return render_template(
@@ -613,6 +614,5 @@ def profile():
 
 
 if __name__ == '__main__':
-    app.secret_key = "super secret key"
     app.debug = True
     app.run()
