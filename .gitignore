@@ -1,6 +1,7 @@
 client_secrets.json
 fb_client_secrets.json
 /y
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

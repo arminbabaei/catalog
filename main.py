@@ -30,6 +30,8 @@ CLIENT_ID = json.loads(open('client_secrets.json',
 
 
 ''' Create anti-forgery state token '''
+
+
 @app.route('/login')
 def showLogin():
     state = ''.join(
@@ -132,7 +134,8 @@ def oauth(provider):
         output += '!</h1>'
         output += '<img src="'
         output += login_session['picture']
-        output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+        output += ' " style = "width: 300px; height: 300px;border-radius: 150p\
+            x;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
         flash("you are now logged in as %s" % login_session['username'])
         # print("done!")
         return output
@@ -150,7 +153,8 @@ def oauth(provider):
                                  'r').read())['web']['app_id']
         app_secret = json.loads(open('fb_client_secrets.json',
                                      'r').read())['web']['app_secret']
-        url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
+        url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exc\
+            hange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
             app_id, app_secret, access_token)
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
@@ -158,15 +162,17 @@ def oauth(provider):
         ''' Use token to get user info from API '''
         userinfo_url = "https://graph.facebook.com/v2.8/me"
         '''
-            Due to the formatting for the result from the server token exchange we have to
-            split the token first on commas and select the first index which gives us the key : value
-            for the server access token then we split it on colons to pull out the actual token value
-            and replace the remaining quotes with nothing so that it can be used directly in the graph
-            api calls
+            Due to the formatting for the result from the server token exchang\
+            e we have to split the token first on commas and select the first \
+            index which gives us the key : value for the server access token t\
+            hen we split it on colons to pull out the actual token value and r\
+            eplace the remaining quotes with nothing so that it can be used di\
+            rectly in the graph api calls
         '''
         token = result.split(',')[0].split(':')[1].replace('"', '')
 
-        url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
+        url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,\
+            id,email' % token
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
         # print("url sent for API access:%s"% url)
@@ -177,14 +183,12 @@ def oauth(provider):
         login_session['email'] = data["email"]
         login_session['facebook_id'] = data["id"]
 
-        ''' 
-            The token must be stored in the login_session in order to properly 
-            logout 
-        '''
+        ''' The token must be stored in the login_session for logout '''
         login_session['access_token'] = token
 
         ''' Get user picture '''
-        url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
+        url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redi\
+            rect=0&height=200&width=200' % token
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
         data = json.loads(result)
@@ -204,7 +208,8 @@ def oauth(provider):
         output += '!</h1>'
         output += '<img src="'
         output += login_session['picture']
-        output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+        output += ' " style = "width: 300px; height: 300px;border-radius: 150p\
+            x;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
 
         flash("Now logged in as %s" % login_session['username'])
         return output
@@ -239,7 +244,9 @@ def getUserID(email):
         return None
 
 
-''' Disconnect - Revoke a current user's token and reset their login_session '''
+''' Revoke a current user's token and reset their login_session '''
+
+
 @app.route('/fbdisconnect')
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
@@ -268,8 +275,8 @@ def gdisconnect():
     # print('In gdisconnect access token is %s', access_token)
     # print('User name is: ')
     # print(login_session['username'])
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session[
-        'access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % \
+        login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     # print('result is ')
@@ -280,7 +287,8 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response = make_response(
+            json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
@@ -314,13 +322,15 @@ def disconnect():
 
 
 ''' JSON APIs to view Category Information '''
-@app.route('/categoty/JSON')
+
+
+@app.route('/category/JSON')
 def indexJSON():
     categories = session.query(Category).all()
     return jsonify(categoryItems=[i.serialize for i in categories])
 
 
-@app.route('/categoty/<int:category_id>/items/JSON')
+@app.route('/category/<int:category_id>/items/JSON')
 def showCategoryItemsJSON(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     categoryItems = session.query(CategoryItem).filter_by(
@@ -328,7 +338,7 @@ def showCategoryItemsJSON(category_id):
     return jsonify(categoryItems=[i.serialize for i in categoryItems])
 
 
-@app.route('/categoty/<int:category_id>/items/<int:item_id>/JSON')
+@app.route('/category/<int:category_id>/items/<int:item_id>/JSON')
 def showItemJSON(category_id, item_id):
     categoryItem = session.query(CategoryItem).filter_by(id=item_id).one()
     return jsonify(categoryItem=categoryItem.serialize)
@@ -343,6 +353,8 @@ def get_user(id):
 
 
 ''' Show all Categories '''
+
+
 @app.route('/')
 @app.route('/catalog')
 def showCategories():
@@ -364,12 +376,16 @@ def showCategories():
 
 
 ''' Create a new Category '''
+
+
 @app.route('/category/new', methods=['GET', 'POST'])
 def newCategory():
-    if 'username' not in login_session:
-        return redirect('/login')
     category = ''
     categories = session.query(Category)
+    if 'username' not in login_session:
+        return "<script>function my function() {alert('You are not authorized \
+        to Create a New Category.');}</script><body onload='myFunction()''>"
+        return redirect('/login')
     if request.method == 'POST':
         newCategory = Category(
             name=request.form['name'], user_id=login_session['user_id'])
@@ -383,12 +399,15 @@ def newCategory():
 
 
 ''' Edit a Category '''
-@app.route('/categoty/<int:category_id>/edit', methods=['GET', 'POST'])
+
+
+@app.route('/category/<int:category_id>/edit', methods=['GET', 'POST'])
 def editCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     categories = session.query(Category)
     editedCategory = session.query(Category).filter_by(id=category_id).one()
+    if editedCategory.user_id != login_session['user_id']:
+        return "<script>function my function() {alert('You are not authorized \
+        to Edit this Category.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = request.form['name']
@@ -401,14 +420,15 @@ def editCategory(category_id):
 
 
 ''' Delete a Category '''
-@app.route('/categoty/<int:category_id>/delete', methods=['GET', 'POST'])
+
+
+@app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_id):
     categories = session.query(Category)
     categoryToDelete = session.query(Category).filter_by(id=category_id).one()
-    if 'username' not in login_session:
-        return redirect('/login')
     if categoryToDelete.user_id != login_session['user_id']:
-        return "<script>function my function() {alert('You are not authorized to delete this restaurant. Please create your own restaurant in order to delete.');}</script><body onload='myFunction()''>"
+        return "<script>function my function() {alert('You are not authorized \
+        to Delete this Category.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(categoryToDelete)
         session.commit()
@@ -421,14 +441,17 @@ def deleteCategory(category_id):
 
 
 ''' Show a Category Items '''
-@app.route('/categoty/<int:category_id>/items')
+
+
+@app.route('/category/<int:category_id>/items')
 def showCategoryItems(category_id):
     categories = session.query(Category)
     category = session.query(Category).filter_by(id=category_id).one()
     creator = getUserInfo(category.user_id)
     categoryItems = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session or \
+            creator.id != login_session['user_id']:
         return render_template(
             'publicCategoryItems.html',
             category=category,
@@ -447,12 +470,17 @@ def showCategoryItems(category_id):
 
 
 ''' Create a New Category Item '''
-@app.route('/categoty/<int:category_id>/items/new', methods=['GET', 'POST'])
+
+
+@app.route('/category/<int:category_id>/items/new', methods=['GET', 'POST'])
 def newCategoryItem(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     item = ''
     category = session.query(Category).filter_by(id=category_id).one()
+    if 'username' not in login_session:
+        return "<script>function my function() {alert('You are not authorized \
+        to Create a New Category Item.');}</script><body onload='myFunction()'\
+            '>"
+        return redirect('/login')
     if request.method == 'POST':
         newCategoryItem = CategoryItem(
             name=request.form['name'],
@@ -475,14 +503,17 @@ def newCategoryItem(category_id):
 
 
 ''' Edit a Category Item '''
+
+
 @app.route(
-    '/categoty/<int:category_id>/items/<int:item_id>/edit',
+    '/category/<int:category_id>/items/<int:item_id>/edit',
     methods=['GET', 'POST'])
 def editCategoryItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     editedCategoryItem = session.query(CategoryItem).filter_by(
         id=item_id).one()
+    if editedCategoryItem.user_id != login_session['user_id']:
+        return "<script>function my function() {alert('You are not authorized \
+        to Edit this Category Item.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['name']:
             editedCategoryItem.name = request.form['name']
@@ -502,14 +533,18 @@ def editCategoryItem(category_id, item_id):
 
 
 ''' Delete a Category Item '''
+
+
 @app.route(
-    '/categoty/<int:category_id>/items/<int:item_id>/delete',
+    '/category/<int:category_id>/items/<int:item_id>/delete',
     methods=['GET', 'POST'])
 def deleteCategoryItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     categoryItemToDelete = session.query(CategoryItem).filter_by(
         id=item_id).one()
+    if categoryItemToDelete.user_id != login_session['user_id']:
+        return "<script>function my function() {alert('You are not authorized \
+        to Delete this Category Item.');}</script><body onload='myFunction()''\
+            >"
     if request.method == 'POST':
         session.delete(categoryItemToDelete)
         session.commit()
@@ -577,4 +612,3 @@ if __name__ == '__main__':
     app.secret_key = "super secret key"
     app.debug = True
     app.run()
-
