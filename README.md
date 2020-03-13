@@ -5,6 +5,7 @@ A Web application that provides a list Cagetory items within a variety of catego
 
 ## Project Setup
 
+<pre><code>
 $ pip install -r requirements.txt --user
 
 $ psql postgres
@@ -77,10 +78,11 @@ Foreign-key constraints:
     "category_item_category_id_fkey" FOREIGN KEY (category_id) REFERENCES category(id)
     "category_item_user_id_fkey" FOREIGN KEY (user_id) REFERENCES "user"(id)
 Access method: heap
-
+</code></pre>
 
 ## Linux Setup
 
+<pre><code>
 $ sudo -s
 $ su - catalog
 $ cd /var/www/udacity_item_catalog
@@ -198,7 +200,7 @@ $ cat /etc/apache2/sites-enabled/catalog.conf
         Require all granted
     </Directory>
 </VirtualHost>
-
+</code></pre>
 
 ## Project Display Example
 
